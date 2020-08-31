@@ -1,1 +1,1 @@
-# chalice-workshop
+# chalice
