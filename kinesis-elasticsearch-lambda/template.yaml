@@ -8,7 +8,7 @@ Description: >
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 60
 Parameters:
   KinesisStreamName:
     Type: String
@@ -40,6 +40,12 @@ Resources:
               - 'ec2:AttachNetworkInterface'
 
             Resource: '*'
+      VpcConfig:
+        SubnetIds:
+          - Ref: PublicSubnet1
+          - Ref: PublicSubnet2
+        SecurityGroupIds:
+          - Ref: mySecurityGroup
   KinesisHandler:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -62,6 +68,11 @@ Resources:
               - 'ec2:AttachNetworkInterface'
 
             Resource: '*'
+      VpcConfig:
+        SubnetIds:
+          - Ref: subnet
+        SecurityGroupIds:
+          - Ref: mySecurityGroup
 
 
           
@@ -108,7 +119,7 @@ Resources:
         SubnetIds:  
           - Ref: subnet
         SecurityGroupIds:
-          - Ref: mySecurityGroup
+          - !GetAtt mySecurityGroup.GroupId
   vpc:
     Type: 'AWS::EC2::VPC'
     Properties:
@@ -131,14 +142,27 @@ Resources:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: es sg
-      VpcId:
-        Ref: vpc
-      GroupName: "dna-sg"
-      SecurityGroupIngress:
-        - FromPort: '443'
-          IpProtocol: tcp
-          ToPort: '443'
-          CidrIp: 0.0.0.0/0
+      VpcId: !Ref vpc
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref vpc
+      AvailabilityZone: ap-northeast-2b
+      CidrBlock: 10.0.3.0/24
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref vpc
+      AvailabilityZone: ap-northeast-2b
+      CidrBlock: 10.0.4.0/24
+
+  InstanceSecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: ingress
+      IpProtocol: -1
+      GroupId: !GetAtt mySecurityGroup.GroupId
+      SourceSecurityGroupId: !GetAtt mySecurityGroup.GroupId
 
   ServiceLinkedRole:
     Type: AWS::IAM::ServiceLinkedRole
