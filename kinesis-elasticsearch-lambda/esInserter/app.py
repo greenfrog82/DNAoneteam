@@ -4,11 +4,7 @@ import sys
 # import requests
 import boto3
 
-from datetime import datetime
 
-from elasticsearch import Elasticsearch
-from elasticsearch import RequestsHttpConnection
-from requests_aws4auth import AWS4Auth
 def lambda_handler(event, context):
     """Sample pure Lambda function
 
@@ -30,41 +26,10 @@ def lambda_handler(event, context):
 
         Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     """
-    ES_HOST = os.getenv('esEndpoint')  
-    # try:
-    #     ip = requests.get("http://checkip.amazonaws.com/")
-    # except requests.RequestException as e:
-    #     # Send some context about this error to Lambda Logs
-    #     print(e)
+    stream_name = os.getenv("StreamName")
+    kinesis_client = boto3.client('kinesis')
+    res = kinesis_client.put_record(StreamName=stream_name, PartitionKey='1', Data='test')
 
-    #     raise e
-    session = boto3.Session(region_name='ap-northeast-2')
-    credentials = session.get_credentials()
-    credentials = credentials.get_frozen_credentials()
-    access_key = credentials.access_key
-    secret_key = credentials.secret_key
-    token = credentials.token
-
-    aws_auth = AWS4Auth(
-        access_key,
-        secret_key,
-        'ap-northeast-2',
-        'es',
-        session_token=token
-    )
-    es_client = Elasticsearch(
-        hosts = [{'host': ES_HOST, 'port': 443}],
-        http_auth=aws_auth,
-        use_ssl=True,
-        verify_certs=True,
-        connection_class=RequestsHttpConnection
-    )
-  
-    print('[INFO] ElasticSearch Service', json.dumps(es_client.info(), indent=2), file=sys.stderr)
-    
-    index = 'product_list'
-    body = '{"query": {"match_all": {}}}'
-    res = es_client.search(index=index, body=body)
     return {
         "statusCode": 200,
         "body": json.dumps(res),

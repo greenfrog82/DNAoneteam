@@ -23,29 +23,18 @@ Resources:
     Properties:
       Environment:
         Variables: 
-          esEndpoint: !GetAtt ElasticSearchDomain.DomainEndpoint 
+          StreamName: !Ref KinesisStreamName
 
-      CodeUri: kinesisHandler/
+      CodeUri: esInserter/
       Handler: app.lambda_handler
       Runtime: python3.7
       Policies:
         Statement:
           - Effect: Allow
             Action: 
-              - 'es:*'
-              - 'ec2:DescribeNetworkInterfaces'
-              - 'ec2:CreateNetworkInterface'
-              - 'ec2:DeleteNetworkInterface'
-              - 'ec2:DescribeInstances'
-              - 'ec2:AttachNetworkInterface'
-
+              - 'kinesis:*'
             Resource: '*'
-      VpcConfig:
-        SubnetIds:
-          - Ref: PublicSubnet1
-          - Ref: PublicSubnet2
-        SecurityGroupIds:
-          - Ref: mySecurityGroup
+
   KinesisHandler:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
