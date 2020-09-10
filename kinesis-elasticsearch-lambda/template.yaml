@@ -106,7 +106,7 @@ Resources:
         AutomatedSnapshotStartHour: 17
       VPCOptions:
         SubnetIds:  
-          - Ref: subnet
+          - Ref: PublicSubnet1
         SecurityGroupIds:
           - !GetAtt mySecurityGroup.GroupId
   vpc:
@@ -144,19 +144,67 @@ Resources:
       VpcId: !Ref vpc
       AvailabilityZone: ap-northeast-2b
       CidrBlock: 10.0.4.0/24
-
   InstanceSecurityGroupIngress:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
+      GroupId: !GetAtt mySecurityGroup.GroupId
       Description: ingress
       IpProtocol: -1
-      GroupId: !GetAtt mySecurityGroup.GroupId
-      SourceSecurityGroupId: !GetAtt mySecurityGroup.GroupId
+      FromPort: 0
+      ToPort: 65535
+      CidrIp: 0.0.0.0/0
+
+#  InstanceSecurityGroupIngress:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      Description: ingress
+#      IpProtocol: -1
+#      GroupId: !GetAtt mySecurityGroup.GroupId
+#      SourceSecurityGroupId: !GetAtt mySecurityGroup.GroupId
 
   ServiceLinkedRole:
     Type: AWS::IAM::ServiceLinkedRole
     Properties: 
       AWSServiceName: es.amazonaws.com
+
+  InternetGateWay:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: DNA-IGW
+  InternetGateWayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateWay
+      VpcId: !Ref vpc
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    DependsOn: InternetGateWay
+    Properties:
+      Tags:
+        - Key: Name
+          Value: DNA-ROUTE-TABLE
+      VpcId: !Ref vpc
+  Route:
+    Type: AWS::EC2::Route
+    DependsOn: RouteTable
+    Properties:
+      RouteTableId:
+        Ref: RouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: InternetGateWay
+  PublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RouteTable
+      SubnetId: !Ref PublicSubnet1
+  PublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RouteTable
+      SubnetId: !Ref PublicSubnet2
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
