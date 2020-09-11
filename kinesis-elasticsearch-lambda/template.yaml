@@ -88,7 +88,7 @@ Resources:
         Ref: ElasticsearchVersion
       ElasticsearchClusterConfig:
         InstanceCount: 1
-        InstanceType: "t2.medium.elasticsearch"
+        InstanceType: "m4.xlarge.elasticsearch"
       EBSOptions:
         EBSEnabled: 'true'
         Iops: 0
@@ -101,18 +101,39 @@ Resources:
             Principal:
               AWS: '*'
             Action: 'es:*'
-            Resource: '*'
+            Resource:
+              !Join
+                - ''
+                - - 'arn'
+                  - ':aws:es:'
+                  - !Ref AWS::Region
+                  - ':'
+                  - !Ref AWS::AccountId
+                  - ':domain/'
+                  - !Ref ESDomainName
+                  - '/test/*'
+
+
       SnapshotOptions:       
         AutomatedSnapshotStartHour: 17
-      VPCOptions:
-        SubnetIds:  
-          - Ref: PublicSubnet1
-        SecurityGroupIds:
-          - !GetAtt mySecurityGroup.GroupId
+      AdvancedSecurityOptions:
+        Enabled: "true"
+        InternalUserDatabaseEnabled: "true"
+        MasterUserOptions:
+          MasterUserName: 'interpark'
+          MasterUserPassword: 'Interpark1!'
+
+#      VPCOptions:
+#        SubnetIds:
+#          - Ref: PublicSubnet1
+#        SecurityGroupIds:
+#          - !GetAtt mySecurityGroup.GroupId
   vpc:
     Type: 'AWS::EC2::VPC'
     Properties:
       CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
   subnet:
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -126,7 +147,7 @@ Resources:
       VpcId:
         Ref: vpc
       CidrBlock: 10.0.2.0/24
-      AvailabilityZone: ap-northeast-2b  
+      AvailabilityZone: ap-northeast-2c
   mySecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -136,13 +157,13 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref vpc
-      AvailabilityZone: ap-northeast-2b
+      AvailabilityZone: ap-northeast-2a
       CidrBlock: 10.0.3.0/24
   PublicSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref vpc
-      AvailabilityZone: ap-northeast-2b
+      AvailabilityZone: ap-northeast-2c
       CidrBlock: 10.0.4.0/24
   InstanceSecurityGroupIngress:
     Type: AWS::EC2::SecurityGroupIngress
