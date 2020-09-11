@@ -117,7 +117,7 @@ Resources:
       SnapshotOptions:       
         AutomatedSnapshotStartHour: 17
       NodeToNodeEncryptionOptions:
-        Enable: "true"
+        Enabled: "true"
       AdvancedSecurityOptions:
         Enabled: "true"
         InternalUserDatabaseEnabled: "true"
