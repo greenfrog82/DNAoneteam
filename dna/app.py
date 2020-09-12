@@ -8,6 +8,11 @@ def index():
     return {'hello': 'world'}
 
 
+@app.route('/ping', methods=['POST'], cors=True)
+def ping():
+    return f'This reponse is from aws lambda - {app.current_request.json_body["msg"]}'
+
+
 # The view function above will return {"hello": "world"}
 # whenever you make an HTTP GET request to '/'.
 #
