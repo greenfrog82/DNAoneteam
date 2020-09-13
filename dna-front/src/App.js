@@ -4,7 +4,8 @@ import './App.css';
 
 function App() {
   const [ping, setPing] = useState({msg: 'ping'});
-  const HOST = 'http://localhost:8000'
+  // const HOST = 'http://localhost:8000';
+  const HOST = 'https://03imqbt3t8.execute-api.ap-northeast-2.amazonaws.com/api';
 
   return (
     <div className="App">
