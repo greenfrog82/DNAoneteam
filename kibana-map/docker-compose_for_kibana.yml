@@ -1,0 +1,12 @@
+version: '2'
+services:
+  kibana:
+    image: kibana:7.7.0
+    ports:
+      - "5601:5601"
+    volumes:
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+#    environment:
+#      SERVER_NAME: localhost
+#      ELASTICSEARCH_HOSTS: elasticsearch_host
+#      KIBANA_INDEX: .kibana3
