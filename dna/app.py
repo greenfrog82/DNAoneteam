@@ -11,34 +11,34 @@ app = Chalice(app_name='dna')
 app.log.setLevel(logging.DEBUG)
 
 store_repo = {
-        'jongno': {
-            "country": "KR",
-            "source_ip": "223.105.146.133",
-            "location": {
-                "lat": 37.57171827707595,
-                "lon": 126.99214406051956,
-            },
+    'jongno': {
+        "country": "KR",
+        "source_ip": "223.105.146.133",
+        "location": {
+            "lat": 37.57171827707595,
+            "lon": 126.99214406051956,
         },
-        'gangnam': {
-            "country": "KR",
-            "source_ip": "221.105.146.133",
-            "location": {
-                "lat": 37.49832874224437,
-                "lon": 127.02785335269097,
-            },
+    },
+    'gangnam': {
+        "country": "KR",
+        "source_ip": "221.105.146.133",
+        "location": {
+            "lat": 37.49832874224437,
+            "lon": 127.02785335269097,
         },
-        'pangyo': {
-            "country": "KR",
-            "source_ip": "222.105.146.133",
-            "location": {
-                "lat": 37.394654177759406,
-                "lon": 127.1111016559017,
-            },
+    },
+    'pangyo': {
+        "country": "KR",
+        "source_ip": "222.105.146.133",
+        "location": {
+            "lat": 37.394654177759406,
+            "lon": 127.1111016559017,
         },
-    }
+    },
+}
 
 
-@app.route('/warehouse', methods=['POST'])
+@app.route('/warehouse', methods=['POST'], cors=True)
 def warehouse():
     """
     app.current_request.json_body 형식
