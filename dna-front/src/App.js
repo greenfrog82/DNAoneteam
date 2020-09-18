@@ -3,21 +3,39 @@ import axios from 'axios';
 import './App.css';
 
 function App() {
-  const [ping, setPing] = useState({msg: 'ping'});
-  // const HOST = 'http://localhost:8000';
-  const HOST = 'https://03imqbt3t8.execute-api.ap-northeast-2.amazonaws.com/api';
+  const [storeInfo, setStoreInfo] = useState({
+      store: 'jongno',
+      product: 'Apple watch series 6'
+  });
+//   const HOST = 'http://localhost:8000';
+  const HOST = 'https://l155m9dcql.execute-api.ap-northeast-2.amazonaws.com/api';
 
   return (
     <div className="App">
       <header className="App-header">
-        <input type="text" value={ping.msg} onChange={
+        <select onChange={
             (e) => {
-                setPing({msg: e.target.value})
+                const value = e.target.value;
+                setStoreInfo(preState => {
+                    return {...preState, store: value}
+                });
+            }
+        }>
+            <option value="jongno">종로</option>
+            <option value="gangnam">강남</option>
+            <option value="pangyo">판교</option>
+        </select>
+        <input type="text" value={storeInfo.product} onChange={
+            (e) => {
+                const value = e.target.value;
+                setStoreInfo(preState => {
+                    return {...preState, product: value}
+                });
             }
         }/>
         <button onClick={
             () => {
-                axios.post(`${HOST}/ping`, ping)
+                axios.post(`${HOST}/warehouse`, storeInfo)
                 .then(function (response) {
                     alert(response.data);
                 }).catch(function (error) {
@@ -25,7 +43,7 @@ function App() {
                 });
             }
         }>
-        Send Ping
+        신상입고
         </button>
       </header>
     </div>
