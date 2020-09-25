@@ -1,17 +1,18 @@
 import React from 'react';
 import Warehouse from './components/Warehouse';
 import EsMap from './components/EsMap';
-import { Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Link} from 'react-router-dom';
 
 function App() {
     return (
-        <main>
+        <BrowserRouter>            
+            <Link to="/map">Go to map</Link>
             <Switch>
                 <Route path="/" component={Warehouse} exact />
                 <Route path="/map" component={EsMap} />
             </Switch>
-        </main>
-    )
+        </BrowserRouter>
+    );
 }
 
 export default App;
