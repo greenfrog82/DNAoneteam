@@ -1,0 +1,12 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "kinedon"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1w3284xu0m53i"
+s3_prefix = "kinedon"
+region = "ap-northeast-2"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "KinesisStreamName=\"kinesis-team-one\" ESDomainName=\"search-dnaoneteam-rfbr26ml4mip3bp3f3zeofkisu.ap-northeast-2.es.amazonaws.com\""
+
